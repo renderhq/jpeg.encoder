@@ -2,6 +2,8 @@
 
 Get up and running with the new Monorepo structure in minutes.
 
+> **Prerequisite:** Ensure you have run `pnpm install` in the root directory first!
+
 ## ⚡ Option 1: The Visual Way (Web App)
 
 Want to see it in action visually? Launch the React app.

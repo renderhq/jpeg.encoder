@@ -5,19 +5,25 @@ A high-performance, pure TypeScript JPEG encoder and decoder. Built as a collect
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 
-## 🚀 Try It Now
+## 🚀 Quick Start
 
-### 🌐 Web Interface (React)
-The project includes a beautiful React-based web interface to try the encoder instantly.
+### 1. Install Dependencies
+**You must run this commands to link all packages and download dependencies.** This will resolve all lint errors in your editor.
 
 ```bash
 pnpm install
+```
+
+### 2. Run the Web App (Visual Demo)
+A beautiful React application running the encoder in the browser.
+
+```bash
 pnpm dev
 # Opens http://localhost:5173
 ```
 
-### 💻 CLI
-Encode images directly from your terminal.
+### 3. Run the CLI
+Encode images from your terminal.
 
 ```bash
 pnpm build
@@ -38,23 +44,23 @@ This project is organized as a monorepo using **pnpm workspaces**:
 
 ## 🔧 Installation
 
-We recommend using **pnpm** or **Bun**.
+We recommend using **pnpm** (preferred) or **Bun**.
 
 ```bash
 # Clone the repository
 git clone https://github.com/renderhq/jpeg.encoder.git
 cd jpeg.encoder
 
-# Install dependencies (workspaces)
+# Install dependencies for all packages
 pnpm install
 
-# Build all packages
+# Build everything
 pnpm build
 ```
 
 ---
 
-## 📖 Usage
+## 📖 Usage Guide
 
 ### 1. Using the Core Library (Developers)
 
@@ -109,7 +115,12 @@ node packages/cli/dist/cli.js decode photo.jpg
 The web demo is a full React application located in `apps/web`.
 
 ```bash
-pnpm --filter @jpeg-encoder/web dev
+# From root
+pnpm dev
+
+# Or directly in apps/web
+cd apps/web
+pnpm dev
 ```
 
 ---
@@ -133,7 +144,7 @@ We use Bun for high-performance testing.
 pnpm test
 ```
 
-### Linting & formatting
+### Linting & Formatting
 Keep the code clean.
 
 ```bash
