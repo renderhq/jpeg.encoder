@@ -1,4 +1,4 @@
-import { encodeJPEGFromFile } from '../packages/cli/src/file-io.js';
+import { encodeJPEGFromFile } from '../packages/cli/src/file-io';
 
 console.log('JPEG Encoder - Progress & Presets Example\n');
 
@@ -13,7 +13,7 @@ async function encodeWithProgress() {
 
     const result = await encodeJPEGFromFile(inputFile, {
         preset,
-        onProgress: (progress, stage) => {
+        onProgress: (progress: number, stage: string) => {
             if (progress !== lastProgress) {
                 console.log(`[${progress}%] ${stage}`);
                 lastProgress = progress;

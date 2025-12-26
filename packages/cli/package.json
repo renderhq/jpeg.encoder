@@ -8,15 +8,17 @@
     },
     "scripts": {
         "build": "tsc",
-        "start": "node dist/cli.js"
+        "start": "node dist/cli.js",
+        "lint": "eslint ."
     },
     "dependencies": {
         "@jpeg-encoder/core": "workspace:*",
-        "sharp": "^0.33.5",
-        "commander": "^11.0.0"
+        "sharp": "^0.33.4",
+        "commander": "^12.0.0"
     },
     "devDependencies": {
-        "@types/node": "^20.0.0",
-        "typescript": "^5.0.0"
+        "@types/node": "^20.14.2",
+        "typescript": "^5.4.5",
+        "eslint": "^9.0.0"
     }
 }
