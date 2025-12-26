@@ -1,123 +1,43 @@
 # Quick Start Guide
 
-Get up and running with JPEG Encoder in 2 minutes.
+Get up and running with the new Monorepo structure in minutes.
 
-## Option 1: Browser Demo (Easiest - No Setup Required)
+## ⚡ Option 1: The Visual Way (Web App)
 
-1. Download or clone this repo
-2. Open `demo.html` in your browser
-3. Done - drag and drop images to encode
+Want to see it in action visually? Launch the React app.
 
-No installation, no build, no configuration required.
+1. **Install**: `pnpm install`
+2. **Run**: `pnpm dev`
+3. **Open**: Browser opens automatically at `http://localhost:5173`
 
----
-
-## Option 2: Command Line (For Developers)
-
-### Step 1: Install Bun
-
-```bash
-# macOS/Linux
-curl -fsSL https://bun.sh/install | bash
-
-# Windows
-powershell -c "irm bun.sh/install.ps1 | iex"
-```
-
-### Step 2: Setup Project
-
-```bash
-# Clone the repo
-git clone https://github.com/renderhq/jpeg.encoder.git
-cd jpeg.encoder
-
-# Install dependencies
-bun install
-
-# Build the project
-bun run build
-```
-
-### Step 3: Use It
-
-```bash
-# Encode an image (easy mode)
-bun run encode input.png
-
-# This creates: input.jpg (quality 75)
-
-# Custom quality
-bun run encode input.png -q 90 -o output.jpg
-
-# Fast mode (2x faster)
-bun run encode input.png -f
-```
+Drag & drop images, adjust quality sliders in real-time, and download the optimized JPEGs. The app runs the encoding logic **entirely in your browser** using `packages/core`.
 
 ---
 
-## Option 3: Use in Your Code
+## 🖥️ Option 2: The Hacker Way (CLI)
 
-### Node.js/Bun
+Prefer the terminal? Use our CLI tool.
+
+1. **Build**: `pnpm build`
+2. **Run**:
+   ```bash
+   node packages/cli/dist/cli.js encode input.png -q 90
+   ```
+3. **Profit**: `input.jpg` is created instantly.
+
+---
+
+## 👨‍💻 Option 3: The Developer Way (Library)
+
+Building your own app? Import the core.
 
 ```typescript
-import { encodeJPEGFromFile } from './src/api.js';
+import { encodeJPEG } from '@jpeg-encoder/core';
 
-// One line to encode
-const result = await encodeJPEGFromFile('photo.png', { quality: 85 });
-await Bun.write('photo.jpg', result.buffer);
+const result = await encodeJPEG(myImageData, {
+  preset: 'web', // 'web', 'print', 'archive', etc.
+  onProgress: (p) => console.log('Progress:', p)
+});
 ```
 
-### Browser
-
-```html
-<script type="module">
-  import { encodeJPEG } from './dist/browser/index.js';
-  
-  // Get image from canvas
-  const ctx = canvas.getContext('2d');
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  
-  // Encode it
-  const result = await encodeJPEG(imageData, { quality: 85 });
-  
-  // Download
-  const blob = new Blob([result.buffer], { type: 'image/jpeg' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'encoded.jpg';
-  a.click();
-</script>
-```
-
----
-
-## Troubleshooting
-
-### "Command not found: bun"
-
-Install Bun first: https://bun.sh/
-
-### "Cannot find module"
-
-Run `bun run build` first.
-
-### "Sharp error"
-
-Sharp requires Node.js. Install Node.js 18+ from https://nodejs.org/
-
-### Demo not working
-
-Just open `demo.html` directly in Chrome, Firefox, or Safari. No server needed.
-
----
-
-## Next Steps
-
-- Read the full [README.md](README.md) for API details
-- Check [examples/](examples/) for more use cases
-- Run `bun test` to verify everything works
-
----
-
-Need help? Open an issue on GitHub: https://github.com/renderhq/jpeg.encoder
+See `examples/` folder for more code snippets.
