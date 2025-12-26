@@ -1,3 +1,0 @@
-class BitStream{
-    const
-}

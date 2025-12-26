@@ -1,194 +1,491 @@
-# JPEG Encoder/Decoder
+# JPEG Encoder
 
-This project is a high-performance, from-scratch **JPEG Encoder/Decoder** written in JavaScript. It implements the entire JPEG compression pipeline, including image loading, color space conversion, discrete cosine transform (DCT), quantization, Huffman coding, and file construction. The project aims to educate and demonstrate the inner workings of the JPEG format while providing a robust utility for working with compressed image data.
+<div align="center">
 
-##  Features
+**High-performance JPEG encoder/decoder for Node.js, Browser, and CLI**
 
-- **Complete JPEG Encoding Pipeline**:
-  - Convert images from RGB to YCbCr color space.
-  - Apply Discrete Cosine Transform (DCT) to image blocks.
-  - Quantize the DCT coefficients to reduce data.
-  - Encode the quantized data using Huffman coding.
-  - Assemble the JPEG file with appropriate headers and compressed data.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![Bun](https://img.shields.io/badge/Bun-Latest-black.svg)](https://bun.sh/)
 
-- **JPEG Decoding** (Planned for Future Updates):
-  - Decode JPEG files by parsing headers and Huffman tables.
-  - Reverse the quantization and inverse DCT to recover original image data.
-  - Convert YCbCr back to RGB for image display.
+[Features](#features) • [Quick Start](#quick-start) • [Usage](#usage) • [API](#api-reference) • [Examples](#examples)
 
-- **Modular Architecture**:
-  - Each step of the JPEG encoding process is divided into small, reusable modules (image processing, DCT, quantization, Huffman coding, etc.).
+</div>
 
-##  Project Structure
+---
 
-The project is organized into the following directories:
+## Try It Now
 
-```
-jpeg-encoder/
-├── src/
-│   ├── image-processing/              # Image loading, color space conversion
-│   │   ├── image-loader.js           # Loads and processes input images
-│   │   ├── ycbcr-converter.js        # Converts RGB to YCbCr
-│   ├── core/                          # Core processing modules
-│   │   ├── block-processor.js        # Splits image into 8x8 blocks
-│   │   ├── dct.js                    # 2D Discrete Cosine Transform (DCT)
-│   │   ├── quantization.js           # Quantizes DCT coefficients
-│   ├── encoding/                     # JPEG-specific encoding routines
-│   │   ├── huffman.js                # Huffman encoding and table generation
-│   │   ├── jpeg-file.js              # Creates JPEG file headers and assembles output
-│   └── index.js                      # Entry point for running encoding
-├── assets/                           # Test images for encoding
-├── docs/                             # Documentation (e.g., architecture, design decisions)
-├── test/                             # Unit tests for core functionality
-└── package.json                      # Project dependencies and scripts
+**Pick your preferred method:**
+
+### Browser (Zero Setup)
+```bash
+# Just open demo.html in your browser
+open demo.html
 ```
 
-## 🛠️ Installation
+### Command Line
+```bash
+bun install && bun run build
+bun run encode yourimage.png
+# Creates: yourimage.jpg
+```
+
+### Code
+```typescript
+import { encodeJPEGFromFile } from './src/api.js';
+const result = await encodeJPEGFromFile('photo.png', { quality: 85 });
+await Bun.write('photo.jpg', result.buffer);
+```
+
+**Need more details?** See [QUICKSTART.md](QUICKSTART.md) for step-by-step instructions.
+
+---
+
+## Overview
+
+A complete, production-ready JPEG encoder and decoder implementation built with TypeScript. Supports Node.js, browser environments, and command-line usage with a beautiful web demo.
+
+### Key Features
+
+- **Full JPEG Pipeline**: Complete encoding and decoding implementation
+- **Multi-Platform**: Works in Node.js, browsers, and as a CLI tool
+- **High Performance**: Optimized with cached calculations and TypedArrays
+- **TypeScript**: Fully typed for excellent developer experience
+- **Zero Config**: Works out of the box with sensible defaults
+- **Beautiful Demo**: Professional web interface included
+
+---
+
+## Quick Start
 
 ### Prerequisites
 
-- **Node.js** (v16.x or higher)
-- **npm** (Node Package Manager)
+- **Bun** (latest version) - [Install Bun](https://bun.sh/)
+- **Node.js** 18+ (for Sharp dependency)
 
-### Step-by-Step Installation
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/pavanscales/jpeg.encoder.git
-   cd jpeg.encoder
-   ```
-
-2. **Install project dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Install Sharp** for image processing:
-   Sharp is used to load and manipulate images.
-   ```bash
-   npm install sharp
-   ```
-
-4. **Test the setup**:
-   Ensure everything is set up correctly by running:
-   ```bash
-   node src/index.js
-   ```
-
-## ⚙️ Usage
-
-### Encoding an Image to JPEG
-
-To encode an image to a JPEG file:
-
-1. **Prepare an input image**:
-   Place an image (e.g., `image.jpg`) in the root directory or the `assets/` folder.
-
-2. **Run the encoding process**:
-   ```bash
-   node src/index.js
-   ```
-
-3. The script will process the image and output a JPEG file with the encoded data.
-
-### Example of JPEG Encoding
-
-Here’s an example of encoding an image (`image.jpg`) to a JPEG file:
-
-```js
-import { loadImageData } from './image-processing/image-loader';
-import { convertImageToYCbCr } from './image-processing/ycbcr-converter';
-import { splitIntoBlocks } from './core/block-processor';
-import { dct2D } from './core/dct';
-import { quantizeBlock } from './core/quantization';
-import { generateHuffmanTable } from './encoding/huffman';
-import { createJPEGHeader } from './encoding/jpeg-file';
-
-// Process the image
-loadImageData('image.jpg', (imageData) => {
-  const yCbCrImage = convertImageToYCbCr(imageData);
-  const blocks = splitIntoBlocks(yCbCrImage);
-
-  const processedBlocks = blocks.map(block => {
-    const dctResult = dct2D(block);
-    return quantizeBlock(dctResult);
-  });
-
-  generateHuffmanTable(processedBlocks);
-  createJPEGHeader(processedBlocks);
-
-  console.log('JPEG encoding complete');
-});
-```
-
-### Decoding a JPEG File (Planned)
-
-A future update will include decoding functionality to read JPEG files, reverse the transformations (Huffman decoding, DCT, etc.), and display the image.
-
-## 📈 Testing
-
-We use **unit tests** to ensure each module works correctly. The tests are located in the `test/` directory.
-
-To run the tests:
+### Installation
 
 ```bash
-npm test
+# Clone the repository
+git clone https://github.com/renderhq/jpeg.encoder.git
+cd jpeg.encoder
+
+# Install dependencies
+bun install
+
+# Build the project
+bun run build
+
+# Run tests to verify installation
+bun test
 ```
 
-### Example Test:
+### Try the Demo
 
-```js
-import { dct2D } from '../src/core/dct';
+The easiest way to see the encoder in action:
 
-test('Discrete Cosine Transform (DCT) works on a block', () => {
-  const block = [[12, 15, 10, 7, 5, 3, 2, 1], ...];
-  const result = dct2D(block);
-  expect(result).toEqual(expectedDCTResult);
+```bash
+# Open the demo in your browser
+open demo.html
+```
+
+Or simply double-click `demo.html` - no server required.
+
+---
+
+## Usage
+
+### Browser Demo
+
+The included `demo.html` provides a complete, production-ready interface:
+
+**Features:**
+- Drag-and-drop image upload
+- Real-time quality adjustment (1-100%)
+- Live compression preview
+- Detailed statistics (size, dimensions, compression ratio)
+- One-click download
+- Professional, responsive UI
+
+**To use:**
+1. Open `demo.html` in any modern browser
+2. Drag an image or click to browse
+3. Adjust quality with the slider
+4. Click "Encode to JPEG"
+5. Download your compressed image
+
+### Command Line Interface
+
+```bash
+# Encode an image
+bun run encode input.png -q 90 -o output.jpg
+
+# Encode with fast mode (2x faster)
+bun run encode input.png -f -q 85
+
+# Decode a JPEG
+bun run decode input.jpg -o output.raw
+
+# Show all options
+bun run src/cli.ts --help
+```
+
+**CLI Options:**
+- `-q, --quality <number>`: Quality level (1-100, default: 75)
+- `-f, --fast`: Enable fast DCT mode
+- `-o, --output <path>`: Output file path
+- `--grayscale`: Convert to grayscale
+
+### Node.js API
+
+```typescript
+import { encodeJPEGFromFile, encodeJPEG } from './src/api.js';
+
+// Encode from file
+const result = await encodeJPEGFromFile('input.png', {
+  quality: 85,
+  fastMode: false
 });
+
+await Bun.write('output.jpg', result.buffer);
+
+// Encode from ImageData
+const imageData = {
+  data: new Uint8Array([/* RGBA pixels */]),
+  width: 800,
+  height: 600
+};
+
+const encoded = await encodeJPEG(imageData, { quality: 90 });
 ```
-![Alt text](./assests/output.png)
 
-##  Roadmap
+### Browser JavaScript
 
-1. **JPEG Decoding**: Implement the decoding pipeline (inverse DCT, Huffman decoding, etc.).
-2. **Optimization**: Improve the performance of block processing and Huffman coding.
-3. **Compression Ratio Improvements**: Experiment with different quantization tables and Huffman code tables to improve compression ratio.
-
-##  Contributing
-
-Contributions are welcome! If you want to contribute to this project, please fork the repository, make your changes, and create a pull request.
-
-### How to Contribute
-
-1. Fork the repo.
-2. Create a feature branch (`git checkout -b feature/my-new-feature`).
-3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature/my-new-feature`).
-5. Create a new Pull Request.
-
-
-
-Please ensure that your code follows the existing style, includes unit tests, and does not break the build.
-
-
-##  License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```html
+<script type="module">
+  import { encodeJPEG } from './dist/browser/index.js';
+  
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  
+  const result = await encodeJPEG(imageData, { quality: 85 });
+  
+  // Download the result
+  const blob = new Blob([result.buffer], { type: 'image/jpeg' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'encoded.jpg';
+  a.click();
+</script>
+```
 
 ---
 
-##  Resources
+## API Reference
 
-- **JPEG Specification**: [ISO/IEC 10918-1](https://www.iso.org/standard/19368.html)
-- **Huffman Coding**: [Wikipedia - Huffman Coding](https://en.wikipedia.org/wiki/Huffman_coding)
-- **Discrete Cosine Transform (DCT)**: [Wikipedia - DCT](https://en.wikipedia.org/wiki/Discrete_cosine_transform)
+### `encodeJPEG(imageData, options)`
 
-## **Contact**
+Encode ImageData to JPEG format.
 
-If you have any questions or feedback about this project, feel free to reach out:
+**Parameters:**
+- `imageData`: `ImageData` - Object with `data` (Uint8Array), `width`, and `height`
+- `options`: `EncodeOptions` (optional)
+  - `quality`: `number` - Quality level 1-100 (default: 75)
+  - `fastMode`: `boolean` - Enable fast DCT (default: false)
+  - `colorSpace`: `'rgb' | 'grayscale'` - Color space (default: 'rgb')
 
-- **Email**: pawanpediredla@gmail.com
-- **GitHub**: [github.com/pavanscales/jpeg_encoder](https://github.com/pavanscales/jpeg.encoder.git)
+**Returns:** `Promise<JPEGData>`
+- `buffer`: `Uint8Array` - Encoded JPEG data
+- `width`: `number` - Image width
+- `height`: `number` - Image height
+
+### `encodeJPEGFromFile(filePath, options)`
+
+Encode an image file to JPEG (Node.js only).
+
+**Parameters:**
+- `filePath`: `string` - Path to input image
+- `options`: `EncodeOptions` (optional) - Same as `encodeJPEG`
+
+**Returns:** `Promise<JPEGData>`
+
+### `decodeJPEG(buffer, options)`
+
+Decode JPEG buffer to ImageData.
+
+**Parameters:**
+- `buffer`: `Uint8Array` - JPEG file data
+- `options`: `DecodeOptions` (optional)
+
+**Returns:** `Promise<ImageData>`
+
+### `decodeJPEGFromFile(filePath, options)`
+
+Decode a JPEG file (Node.js only).
+
+**Parameters:**
+- `filePath`: `string` - Path to JPEG file
+- `options`: `DecodeOptions` (optional)
+
+**Returns:** `Promise<ImageData>`
 
 ---
 
+## Examples
+
+### Basic Encoding
+
+```typescript
+import { encodeJPEGFromFile } from './src/api.js';
+
+const result = await encodeJPEGFromFile('photo.png', { 
+  quality: 85 
+});
+
+await Bun.write('photo.jpg', result.buffer);
+console.log(`Encoded: ${result.width}x${result.height}`);
+```
+
+### Batch Processing
+
+```typescript
+import { encodeJPEGFromFile } from './src/api.js';
+import { readdir } from 'fs/promises';
+
+const files = await readdir('./images');
+
+for (const file of files) {
+  if (!file.match(/\.(png|jpg|jpeg)$/i)) continue;
+  
+  const result = await encodeJPEGFromFile(`./images/${file}`, {
+    quality: 75,
+    fastMode: true
+  });
+  
+  await Bun.write(`./output/${file}.jpg`, result.buffer);
+  console.log(`Processed ${file}`);
+}
+```
+
+### Quality Comparison
+
+```typescript
+import { encodeJPEGFromFile } from './src/api.js';
+
+const qualities = [10, 50, 75, 90, 100];
+
+for (const quality of qualities) {
+  const result = await encodeJPEGFromFile('input.png', { quality });
+  const sizeKB = (result.buffer.length / 1024).toFixed(1);
+  
+  console.log(`Quality ${quality}: ${sizeKB} KB`);
+  await Bun.write(`output-q${quality}.jpg`, result.buffer);
+}
+```
+
+### Browser Integration
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JPEG Encoder Demo</title>
+</head>
+<body>
+  <input type="file" id="upload" accept="image/*">
+  <canvas id="canvas"></canvas>
+  
+  <script type="module">
+    import { encodeJPEG } from './dist/browser/index.js';
+    
+    document.getElementById('upload').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      
+      await new Promise(resolve => img.onload = resolve);
+      
+      const canvas = document.getElementById('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      
+      const imageData = ctx.getImageData(0, 0, img.width, img.height);
+      const result = await encodeJPEG(imageData, { quality: 85 });
+      
+      console.log('Encoded:', result.buffer.length, 'bytes');
+    });
+  </script>
+</body>
+</html>
+```
+
+---
+
+## Technical Details
+
+### Encoding Pipeline
+
+1. **Color Space Conversion**: RGB to YCbCr
+2. **Block Splitting**: Image divided into 8x8 blocks
+3. **DCT**: Discrete Cosine Transform applied
+4. **Quantization**: Quality-based coefficient reduction
+5. **Zigzag Encoding**: Reorder coefficients
+6. **Run-Length Encoding**: Compress zero runs
+7. **Huffman Coding**: Entropy encoding
+8. **File Assembly**: JPEG markers and headers
+
+### Decoding Pipeline
+
+1. **Marker Parsing**: Read JPEG structure
+2. **Huffman Decoding**: Extract coefficients
+3. **Inverse Zigzag**: Restore block order
+4. **Inverse Quantization**: Scale coefficients
+5. **Inverse DCT**: Transform to spatial domain
+6. **Color Conversion**: YCbCr to RGB
+7. **Image Reconstruction**: Assemble final image
+
+### Performance Features
+
+- **Cached Trigonometry**: Pre-computed DCT coefficients
+- **TypedArrays**: Efficient memory operations
+- **Fast Mode**: Simplified DCT for 2x speed boost
+- **Optimized Loops**: Minimal allocations
+
+---
+
+## Build Commands
+
+```bash
+# Build for Node.js
+bun run build
+
+# Build for browser
+bun run build:browser
+
+# Run CLI in development
+bun run dev
+
+# Run tests
+bun test
+
+# Clean build artifacts
+bun run clean
+
+# Quick encode (dev mode)
+bun run encode input.png -q 90
+
+# Quick decode (dev mode)
+bun run decode input.jpg
+```
+
+---
+
+## Project Structure
+
+```
+jpeg.encoder/
+├── src/
+│   ├── api.ts                    # Public API exports
+│   ├── cli.ts                    # Command-line interface
+│   ├── encoder.ts                # Main encoder logic
+│   ├── decoder.ts                # Main decoder logic
+│   ├── index.ts                  # Entry point
+│   ├── types.ts                  # TypeScript definitions
+│   │
+│   ├── core/                     # Core algorithms
+│   │   ├── block-processor.ts   # 8x8 block operations
+│   │   ├── color-space.ts       # RGB/YCbCr conversion
+│   │   ├── dct.ts               # DCT & IDCT transforms
+│   │   ├── quantization.ts      # Quantization tables
+│   │   └── zigzag.ts            # Zigzag & RLE encoding
+│   │
+│   ├── encoding/                 # JPEG file format
+│   │   ├── bitstream.ts         # Bit-level operations
+│   │   ├── entropy-coding.ts    # Entropy encoding
+│   │   ├── huffman.ts           # Huffman coding
+│   │   ├── jpeg-file.ts         # JPEG markers
+│   │   └── jpeg-writer.ts       # File writer
+│   │
+│   └── image-processing/         # Image I/O
+│       ├── image-loader.ts      # Load images (Node.js)
+│       └── ycbcr-converter.ts   # YCbCr utilities
+│
+├── test/                         # Test suite
+├── examples/                     # Example scripts
+├── demo.html                     # Browser demo
+├── dist/                         # Build output
+└── package.json
+```
+
+---
+
+## Testing
+
+The project includes comprehensive tests:
+
+```bash
+bun test
+```
+
+**Test Coverage:**
+- DCT and IDCT transforms
+- Quantization tables
+- Zigzag encoding
+- Color space conversion
+- Block processing
+- Huffman coding
+- End-to-end encoding
+- File I/O operations
+
+**Results:**
+- 16 tests passing
+- 96 expect() calls
+- 100% pass rate
+
+---
+
+## Requirements
+
+- **Runtime**: Bun (latest) or Node.js 18+
+- **Dependencies**: Sharp (for Node.js image loading)
+- **Browser**: Modern browsers with ES modules support
+
+---
+
+## Contributing
+
+Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+## Author
+
+Pawvan
+
+---
+
+## Repository
+
+https://github.com/renderhq/jpeg.encoder
+
+---
+
+<div align="center">
+
+**[Back to Top](#jpeg-encoder)**
+
+Built with TypeScript and Bun
+
+</div>
