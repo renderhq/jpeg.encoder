@@ -28,6 +28,8 @@ export interface EncodeOptions {
     fastMode?: boolean;
     colorSpace?: 'rgb' | 'grayscale';
     progressive?: boolean;
+    preset?: string;
+    onProgress?: (progress: number, stage: string) => void;
 }
 
 export interface DecodeOptions {

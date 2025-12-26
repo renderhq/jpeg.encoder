@@ -6,19 +6,30 @@ import { quantizeBlock } from './core/quantization.js';
 import { zigzagEncode, runLengthEncode } from './core/zigzag.js';
 import { encodeHuffmanDC, encodeHuffmanAC } from './encoding/huffman.js';
 import { JPEGWriter } from './encoding/jpeg-writer.js';
+import { getPreset } from './presets.js';
 
 export async function encodeJPEG(
     imageData: ImageData,
     options: EncodeOptions = {}
 ): Promise<JPEGData> {
-    const {
+    let {
         quality = 75,
         fastMode = false,
         colorSpace = 'rgb',
-        progressive = false
+        progressive = false,
+        onProgress
     } = options;
 
+    if (options.preset) {
+        const preset = getPreset(options.preset);
+        quality = preset.quality;
+        fastMode = preset.fastMode;
+    }
+
     const { width, height } = imageData;
+
+    onProgress?.(0, 'Converting color space');
+
 
     const yCbCrImage = convertImageToYCbCr(
         Array.from(imageData.data).reduce((acc, val, i) => {
@@ -28,7 +39,11 @@ export async function encodeJPEG(
         }, [] as number[][]) as any
     );
 
+    onProgress?.(20, 'Splitting into blocks');
+
     const yBlocks = splitIntoBlocks(yCbCrImage.yCbCrData);
+
+    onProgress?.(30, 'Writing JPEG headers');
 
     const writer = new JPEGWriter();
     writer.writeSOI();
@@ -41,7 +56,10 @@ export async function encodeJPEG(
     let compressedData = '';
     let prevDC = 0;
 
-    for (const block of yBlocks) {
+    const totalBlocks = yBlocks.length;
+
+    for (let i = 0; i < totalBlocks; i++) {
+        const block = yBlocks[i];
         const dctBlock = fastMode ? fastDCT(block) : dct2D(block);
         const quantized = quantizeBlock(dctBlock, quality, true);
         const zigzag = zigzagEncode(quantized);
@@ -56,10 +74,19 @@ export async function encodeJPEG(
         for (const [run, value] of rle) {
             compressedData += encodeHuffmanAC(run, value, true);
         }
+
+        if (i % Math.max(1, Math.floor(totalBlocks / 10)) === 0) {
+            const progress = 30 + Math.floor((i / totalBlocks) * 60);
+            onProgress?.(progress, 'Encoding blocks');
+        }
     }
+
+    onProgress?.(90, 'Finalizing JPEG');
 
     writer.writeCompressedData(compressedData);
     writer.writeEOI();
+
+    onProgress?.(100, 'Complete');
 
     return {
         buffer: writer.getBuffer(),
