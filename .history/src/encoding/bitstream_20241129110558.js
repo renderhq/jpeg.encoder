@@ -1,5 +1,0 @@
-class BitStream{
-    constructor(){
-        
-    }
-}
