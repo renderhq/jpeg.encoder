@@ -95,19 +95,3 @@ export async function encodeJPEG(
         quality
     };
 }
-
-export async function encodeJPEGFromFile(
-    filePath: string,
-    options: EncodeOptions = {}
-): Promise<JPEGData> {
-    const sharp = await import('sharp');
-    const { data, info } = await sharp.default(filePath)
-        .raw()
-        .toBuffer({ resolveWithObject: true });
-
-    return encodeJPEG({
-        data: new Uint8ClampedArray(data),
-        width: info.width,
-        height: info.height
-    }, options);
-}

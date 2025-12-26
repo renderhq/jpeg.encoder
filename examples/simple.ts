@@ -1,4 +1,4 @@
-import { encodeJPEGFromFile } from '../src/api.js';
+import { encodeJPEGFromFile } from '../packages/cli/src/file-io.js';
 
 console.log('Simple JPEG Encoder Example\n');
 

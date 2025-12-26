@@ -1,4 +1,4 @@
-import { encodeJPEGFromFile } from '../src/encoder.js';
+import { encodeJPEGFromFile } from '../packages/cli/src/file-io.js';
 import { writeFile } from 'fs/promises';
 
 async function main() {

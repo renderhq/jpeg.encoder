@@ -1,0 +1,21 @@
+{
+    "name": "@jpeg-encoder/core",
+    "version": "2.1.0",
+    "description": "Core JPEG encoding/decoding library",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0"
+    },
+    "keywords": [
+        "jpeg",
+        "encoder",
+        "decoder",
+        "core"
+    ]
+}

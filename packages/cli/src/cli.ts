@@ -1,12 +1,11 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import { parseArgs } from 'util';
-import { encodeJPEGFromFile } from './encoder.js';
-import { decodeJPEGFromFile } from './decoder.js';
+import { encodeJPEGFromFile, decodeJPEGFromFile } from './file-io.js';
 import { writeFile } from 'fs/promises';
 
 const { values, positionals } = parseArgs({
-    args: Bun.argv.slice(2),
+    args: process.argv.slice(2),
     options: {
         quality: { type: 'string', short: 'q', default: '75' },
         fast: { type: 'boolean', short: 'f', default: false },

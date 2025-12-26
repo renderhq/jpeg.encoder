@@ -94,12 +94,3 @@ export async function decodeJPEG(
     const decoder = new JPEGDecoder(buffer);
     return decoder.decode();
 }
-
-export async function decodeJPEGFromFile(
-    filePath: string,
-    options: DecodeOptions = {}
-): Promise<ImageData> {
-    const fs = await import('fs/promises');
-    const buffer = await fs.readFile(filePath);
-    return decodeJPEG(new Uint8Array(buffer), options);
-}

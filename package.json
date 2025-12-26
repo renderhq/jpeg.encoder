@@ -1,55 +1,17 @@
 {
-  "name": "jpeg-encoder",
-  "version": "2.0.0",
-  "description": "Complete JPEG encoder/decoder for Node.js and Browser with CLI",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "bin": {
-    "jpeg-encoder": "./dist/cli.js"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./encoder": {
-      "import": "./dist/encoder.js",
-      "types": "./dist/encoder.d.ts"
-    },
-    "./decoder": {
-      "import": "./dist/decoder.js",
-      "types": "./dist/decoder.d.ts"
-    }
-  },
+  "name": "jpeg-encoder-monorepo",
+  "private": true,
+  "version": "2.1.0",
   "scripts": {
-    "dev": "bun run src/cli.ts",
-    "build": "bun build src/index.ts --outdir ./dist --target node --external sharp && bun build src/cli.ts --outdir ./dist --target node --external sharp",
-    "build:browser": "bun build src/index.ts --outdir ./dist/browser --target browser --minify",
-    "start": "bun run dist/cli.js",
-    "test": "bun test",
-    "clean": "rm -rf dist",
-    "encode": "bun run src/cli.ts encode",
-    "decode": "bun run src/cli.ts decode"
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "dev": "pnpm --filter @jpeg-encoder/web-demo dev"
   },
-  "keywords": [
-    "jpeg",
-    "encoder",
-    "decoder",
-    "image",
-    "compression",
-    "dct",
-    "huffman",
-    "typescript",
-    "bun"
-  ],
-  "author": "Pawvan",
-  "license": "MIT",
   "devDependencies": {
-    "@types/bun": "latest",
-    "bun-types": "latest"
+    "typescript": "^5.0.0",
+    "pnpm": "^9.0.0"
   },
-  "dependencies": {
-    "sharp": "^0.33.5"
+  "engines": {
+    "node": ">=18"
   }
 }

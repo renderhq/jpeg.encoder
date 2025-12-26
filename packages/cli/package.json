@@ -1,0 +1,22 @@
+{
+    "name": "@jpeg-encoder/cli",
+    "version": "2.1.0",
+    "description": "CLI tool for JPEG encoder",
+    "type": "module",
+    "bin": {
+        "jpeg-encoder": "./dist/cli.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/cli.js"
+    },
+    "dependencies": {
+        "@jpeg-encoder/core": "workspace:*",
+        "sharp": "^0.33.5",
+        "commander": "^11.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0"
+    }
+}
